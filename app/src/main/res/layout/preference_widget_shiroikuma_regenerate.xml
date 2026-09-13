@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- shiroikuma fork (Phase 4): the "Regenerate" pill on the right of the automation-token row —
+     black fill, 1.5dp accent stroke, round; matches the panel's pill buttons. -->
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/shiroikuma_automation_regenerate"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginLeft="8dp"
+    android:background="@drawable/shiroikuma_pill"
+    android:clickable="true"
+    android:focusable="true"
+    android:paddingStart="14dp"
+    android:paddingLeft="14dp"
+    android:paddingEnd="14dp"
+    android:paddingRight="14dp"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:text="@string/shiroikuma_auto_regenerate"
+    android:textColor="?attr/colorAccent"
+    android:textSize="13sp" />

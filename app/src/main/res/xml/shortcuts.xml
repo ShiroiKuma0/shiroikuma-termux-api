@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- shiroikuma fork (Phase 4): a static launcher shortcut straight to the 白い熊 Termux API UI page,
+     attached to the launcher activity-alias in the manifest. -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="shiroikuma_ui"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher"
+        android:shortcutShortLabel="@string/shiroikuma_shortcut_ui_short"
+        android:shortcutLongLabel="@string/shiroikuma_shortcut_ui_long"
+        android:shortcutDisabledMessage="@string/shiroikuma_shortcut_ui_disabled">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.termux.api"
+            android:targetClass="com.termux.api.shiroikuma.ui.ShiroikumaUiActivity" />
+    </shortcut>
+</shortcuts>

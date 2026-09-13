@@ -50,7 +50,52 @@ case analysis.
 | Build task | `buildFork` (assembleRelease → copy to `~/tmp/` → bump `BUILD_NUMBER`) | `app/shiroikuma.gradle`, applied by the last line of `app/build.gradle` |
 | Fork links | `https://github.com/ShiroiKuma0/shiroikuma-termux-api` (+ `/issues`, `/releases`) and `https://github.com/ShiroiKuma0/shiroikuma-termux` everywhere the app links out — **done (Phase 3)** | `ShiroikumaConstants.GITHUB_REPO_URL` / `TERMUX_GITHUB_REPO_URL` fed into `plugin_info` by `TermuxAPIMainActivity` (the `termux-api-package` docs link stays upstream's), `ShiroikumaConstants.getImportantLinksMarkdownString()` replaces `TermuxUtils.getImportantLinksMarkdownString()` on the About page (`TermuxAPISettingsActivity`; Termux + Termux:API rows → the forks, other plugins / packages / email / reddit / wiki as upstream), `README.md` fork header. `TermuxAPIConstants.java` holds no links (only the receiver name and the file-share authority) — untouched. No fastlane in this repo |
 | De-branding | our name + our GitHub links everywhere user-visible; donate row removed — **done (Phase 3)** | the rows above, plus `keep_alive_service` in `strings.xml` now uses the entity, the `link__termux_donate` `<Preference>` is dropped from `res/xml/sets__termux.xml` and its `link__donate___val__title` string from `strings.xml` (`configureDonatePreference()` in `TermuxAPISettingsActivity` stays as dead code — `findPreference` returns null — to keep the upstream diff small). Deliberately left: `LOG_TAG`s, `CHANNEL_ID`, `TermuxAudioRecording_` / `TermuxFingerprintAPIKey` internal names, ResultReturner's "Termux app" exception texts (developer-facing), upstream's README body and `SECURITY.md` |
-| 白い熊 Termux API UI | the black-yellow page: Export/Import (settings only) + automation rows + Reset — **pending (Phase 4)** | `app/src/main/java/com/termux/api/shiroikuma/` |
+| 白い熊 Termux API UI | the black-yellow page (title `白い熊 Termux API UI`): Export / Import section → Reset section — **done (Phase 4)**; see "The UI page" below | host `shiroikuma/ui/ShiroikumaUiActivity.java` (theme `Theme.Shiroikuma.Ui` in `res/values/shiroikuma_styles.xml`, layout `res/layout/activity_shiroikuma_ui.xml`), page `shiroikuma/ui/ShiroikumaUiFragment.java` + `res/xml/preferences_shiroikuma_ui.xml`, kxkb-style rows `res/layout/preference_category_shiroikuma{,_first}.xml` / `preference_shiroikuma_{indent1,indent2,subheader}.xml` / `preference_widget_shiroikuma_regenerate.xml`, `shiroikuma/ui/{ShiroikumaViews,AutomationTokenPreference}.java`, strings/colours `res/values/shiroikuma_{strings,colors}.xml`, pill `res/drawable/shiroikuma_pill.xml`. Entry points: static shortcut `res/xml/shortcuts.xml` (`<meta-data android.app.shortcuts>` on the launcher alias in the manifest), long-press on the main toolbar's settings icon (`ShiroikumaUiActivity.installSettingsLongPress`, one line in `TermuxAPIMainActivity.onCreateOptionsMenu`), first row of `res/xml/sets__termux.xml` (an `<intent>` preference) |
+| Export / Import | one ZIP `shiroikuma-termux-api_<yyyy-MM-dd_HH-mm-ss>.zip` (written as `.part`, renamed when complete) into a SAF tree directory; category `settings` only — **done (Phase 4)** | engine `shiroikuma/backup/ShiroikumaExport.java`, panel `shiroikuma/ui/ExportImportPanel.java` (raikidoban port: bordered box, red/yellow directory box, 全選択 + categories, Cancel ‖ Import Export pills, info dialog closes the chain, import → Later / Restart now); `androidx.documentfile` declared in `app/shiroikuma.gradle` |
+| 保存復元 automation (contract v2 §1–§4) | receiver `com.termux.api.action.{EXPORT_STATE,CANCEL_EXPORT,LIST_CATEGORIES}`, provider `com.termux.api.automation` (describe / export / import / cancel), `dataSync` foreground service, progress + heartbeat, `<queries>` for both callers, `shiroikuma.automation.{contract=2,format=1,min_format=1}` — **done (Phase 4)** | `shiroikuma/automation/{AutomationAuth,AutomationCallers,AutomationJobs,AutomationProgress,AutomationForeground,StateExportReceiver,AutomationProvider,AutomationDataService}.java`; the additive block at the end of `AndroidManifest.xml` (+ `FOREGROUND_SERVICE{,_DATA_SYNC}` and the `<queries>` up top); `app/shiroikuma-proguard-rules.pro` |
+
+### The UI page (Phase 4)
+
+`白い熊 Termux API UI` — black `#000000`, yellow `#FFFF00`, dim `#C8C800`, warning red `#FF5252`;
+section headings 20 sp bold with a text-wide 2.5 dp underline (1 px hairline above every section
+but the first), rows at the 72 dp indent, 5 dp vertical padding, no dividers, pill buttons, bordered
+dialogs. Sections and rows, top to bottom:
+
+- **Export / Import** — 「Export / Import…」 (the panel) · 「Export directory」 (absolute path when
+  resolvable, red *not set* otherwise; tap → `ACTION_OPEN_DOCUMENT_TREE`, persisted) · 「Last export」
+  (queried on `onResume` off the main thread: yellow `date time · size`, red *none* / *no directory*)
+  · switch 「Automation export」 (default **ON**) · switch 「Use authorization token?」 (default
+  **OFF**) · 「Automation token」 (only while the switch above is on; abbreviated, tap copies,
+  「Regenerate」 pill with a confirm).
+- **Reset** — 「Reset the 白い熊 UI settings」: confirm dialog, then the export directory is forgotten
+  and `shiroikuma_automation` is cleared (switch back ON, token not required, new token on next read).
+
+No appearance sections: Termux:API draws almost nothing of its own.
+
+**Categories** (the `Cat` enum in `ShiroikumaExport`; ids are the ZIP entry names and the
+`items` ids): `settings` — "Settings (log level · app preferences)", default on. ZIP layout:
+`manifest.json` first (`format` = `shiroikuma-termux-api`, `version` 1, `app`, `appVersion`,
+`createdTs`, `categories[]`), then `settings.json` =
+`{"<prefs file>":{"<key>":{"t":"int|long|float|bool|string|set","v":…}}}` — every file under
+`shared_prefs/` (always `com.termux.api_preferences`, the app's one real file: `log_level`) except
+`shiroikuma_automation`, `shiroikuma_eximport`, `_has_set_default_values`, `WebViewChromiumPrefs`,
+and minus the key `last_pending_intent_request_code` (a per-device counter). Import = per-key merge
+with `commit()`, only the categories present in the archive, per-category counts reported.
+
+**Prefs files** (device-local, never exported): `shiroikuma_eximport` (`dir_uri` — the SAF tree
+Uri), `shiroikuma_automation` (`automation_enabled` bool default true, `automation_require_token`
+bool default false, `automation_token` 48-hex generated lazily; all writes `commit()`).
+
+**Automation specifics of this app**: the §1 `EXPORT_STATE` runs inside the receiver's
+`goAsync()` window (a settings-only ZIP finishes in milliseconds — no foreground service, so the
+cold batch can never be refused a foreground start); the §2a data door runs in
+`AutomationDataService` (`dataSync`), guarded at both start sites through
+`AutomationForeground.refusal()` (`ERROR:no-foreground-start` only for
+`ForegroundServiceStartNotAllowedException` by class name while not battery-exempt). The app
+**declares** `MANAGE_EXTERNAL_STORAGE` (upstream), so an absolute `path` extra is honoured only
+when `Environment.isExternalStorageManager()` and otherwise refused with exactly
+`ERROR:no-storage-access`; no `path` → the SAF directory → `ERROR:no-directory`. `describe` answers
+`requires_permissions: []` and `contains: ["Settings (log level · app preferences)"]`.
 
 ### CHANGELOG.md is unified — our sections on top
 
@@ -127,7 +172,8 @@ One Gradle module, `:app`, package `com.termux.api`.
 | Entry point: broadcast receiver the CLI targets (`com.termux.api/.TermuxApiReceiver`) | `app/src/main/java/com/termux/api/TermuxApiReceiver.java` |
 | Socket listener (`com.termux.api://listen`) + keep-alive service | `SocketListener.java`, `KeepAliveService.java` |
 | The 37 API implementations (`termux-camera-photo`, `termux-notification`, …) | `app/src/main/java/com/termux/api/apis/*API.java` |
-| Main / settings activities (the settings page is where our UI page will hang) | `activities/`, `settings/`, `res/xml/prefs__*.xml` |
+| Main / settings activities (our UI page hangs off both — see the customization table) | `activities/`, `settings/`, `res/xml/prefs__*.xml`, `res/xml/sets__termux.xml` |
+| Our UI page, Export / Import engine, automation contract | `shiroikuma/ui/`, `shiroikuma/backup/`, `shiroikuma/automation/` + the `shiroikuma_*` resources |
 | Constants (app name, GitHub links) | ours: `shiroikuma/ShiroikumaConstants.java` + the `<!ENTITY>` block in `res/values/strings.xml`; upstream's `TermuxAPIConstants.java` (receiver name, share authority) and the library's `TermuxConstants` (log tag, paths) |
 | Manifest: `sharedUserId`, the placeholders, every permission the APIs need | `app/src/main/AndroidManifest.xml` |
 | Shared Termux library (constants, prefs, logger) | `com.termux.termux-app:termux-shared` (JitPack) |

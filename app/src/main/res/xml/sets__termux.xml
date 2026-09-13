@@ -1,4 +1,16 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- shiroikuma fork (Phase 4): the 白い熊 Termux API UI page, first -->
+    <Preference
+        app:key="shiroikuma_ui"
+        app:title="@string/shiroikuma_ui_title"
+        app:summary="@string/shiroikuma_ui_row_summary"
+        app:persistent="false">
+        <intent
+            android:targetPackage="com.termux.api"
+            android:targetClass="com.termux.api.shiroikuma.ui.ShiroikumaUiActivity" />
+    </Preference>
 
     <Preference
         app:key="sets__termux_api_app"

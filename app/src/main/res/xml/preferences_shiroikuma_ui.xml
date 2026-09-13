@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- shiroikuma fork (Phase 4): the 白い熊 Termux API UI page. PreferenceCategory = section header;
+     rows sit at indent 1 (directly under a section). Keys are wired by ShiroikumaUiFragment; every
+     row is persistent="false" because its state lives in the fork's own prefs files
+     (shiroikuma_eximport / shiroikuma_automation), never in the app's exported preferences. -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="@string/shiroikuma_ui_section_eim"
+        android:layout="@layout/preference_category_shiroikuma_first"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            android:key="pref_eximport"
+            android:title="@string/shiroikuma_eim_entry"
+            android:summary="@string/shiroikuma_eim_entry_desc"
+            android:layout="@layout/preference_shiroikuma_indent1"
+            android:persistent="false"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="pref_export_dir"
+            android:title="@string/shiroikuma_eim_dir"
+            android:layout="@layout/preference_shiroikuma_indent1"
+            android:persistent="false"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="pref_last_export"
+            android:title="@string/shiroikuma_eim_last"
+            android:layout="@layout/preference_shiroikuma_indent1"
+            android:selectable="false"
+            android:persistent="false"
+            app:iconSpaceReserved="false" />
+
+        <!-- 保存復元 automation contract v2: three rows, inside this section, in this order. The
+             master switch (default ON) gates the exported StateExportReceiver and the
+             AutomationProvider data door; 「Use authorization token?」 (default OFF) decides whether a
+             caller must also present the token; the token row is shown only while it is being asked
+             for. All three live in the device-local shiroikuma_automation prefs, never exported. -->
+        <SwitchPreferenceCompat
+            android:key="pref_automation_enabled"
+            android:title="@string/shiroikuma_auto_switch"
+            android:summary="@string/shiroikuma_auto_switch_desc"
+            android:layout="@layout/preference_shiroikuma_indent1"
+            android:persistent="false"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_automation_require_token"
+            android:title="@string/shiroikuma_auto_require_token"
+            android:summary="@string/shiroikuma_auto_require_token_desc"
+            android:layout="@layout/preference_shiroikuma_indent1"
+            android:persistent="false"
+            app:iconSpaceReserved="false" />
+
+        <com.termux.api.shiroikuma.ui.AutomationTokenPreference
+            android:key="pref_automation_token"
+            android:title="@string/shiroikuma_auto_token"
+            android:summary="@string/shiroikuma_auto_token_desc"
+            android:layout="@layout/preference_shiroikuma_indent1"
+            android:widgetLayout="@layout/preference_widget_shiroikuma_regenerate"
+            android:persistent="false"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/shiroikuma_ui_section_reset"
+        android:layout="@layout/preference_category_shiroikuma"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            android:key="pref_reset_ui"
+            android:title="@string/shiroikuma_reset"
+            android:summary="@string/shiroikuma_reset_desc"
+            android:layout="@layout/preference_shiroikuma_indent1"
+            android:persistent="false"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

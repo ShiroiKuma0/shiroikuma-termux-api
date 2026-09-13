@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.termux.api.TermuxAPIApplication;
 import com.termux.api.shiroikuma.ShiroikumaConstants;
+import com.termux.api.shiroikuma.ui.ShiroikumaUiActivity;
 import com.termux.api.settings.activities.TermuxAPISettingsActivity;
 import com.termux.api.util.ViewUtils;
 import com.termux.shared.activity.ActivityUtils;
@@ -81,6 +82,8 @@ public class TermuxAPIMainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.activity_termux_api_main, menu);
+        // shiroikuma fork (Phase 4): long-press on the settings icon opens the 白い熊 Termux API UI page
+        ShiroikumaUiActivity.installSettingsLongPress(this, findViewById(com.termux.shared.R.id.toolbar), R.id.menu_settings);
         return true;
     }
 

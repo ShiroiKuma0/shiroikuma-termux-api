@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- shiroikuma-termux-api fork (Phase 4): the house palette of the 白い熊 Termux API UI page. -->
+<resources>
+    <color name="shiroikuma_black">#FF000000</color>
+    <color name="shiroikuma_yellow">#FFFFFF00</color>
+    <color name="shiroikuma_yellow_dim">#FFC8C800</color>
+    <color name="shiroikuma_warn">#FFFF5252</color>
+    <color name="shiroikuma_ripple">#33FFFF00</color>
+</resources>

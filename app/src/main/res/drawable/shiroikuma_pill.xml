@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- shiroikuma fork (Phase 4): the house pill — black fill, 1.5dp yellow stroke, fully round, with
+     a dim yellow ripple. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/shiroikuma_ripple">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/shiroikuma_black" />
+            <stroke android:width="1.5dp" android:color="@color/shiroikuma_yellow" />
+            <corners android:radius="50dp" />
+        </shape>
+    </item>
+</ripple>

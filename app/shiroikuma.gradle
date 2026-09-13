@@ -87,6 +87,15 @@ def forkVersionCode = upstreamVersionCode * 10000 + forkBuildNumber
 android.defaultConfig.versionName = forkVersionName
 android.defaultConfig.versionCode = forkVersionCode
 
+// --- Phase 4: the 白い熊 UI page's own needs --------------------------------------------------
+// androidx.documentfile is already on the classpath transitively (1.0.0) — declared here so the
+// Export/Import code (SAF tree directory, DocumentFile) does not rest on someone else's dependency.
+// The keep rules cover the custom Preference the page XML instantiates by name.
+dependencies {
+    implementation 'androidx.documentfile:documentfile:1.0.1'
+}
+android.buildTypes.release.proguardFile(file('shiroikuma-proguard-rules.pro'))
+
 // --- release signing (gitignored keystore.properties) -----------------------------------------
 // Upstream signs nothing but debug (testkey_untrusted.jks) — its releases are CI debug builds. We
 // sign the release build type from keystore.properties. The key is the ONE keystore of the whole

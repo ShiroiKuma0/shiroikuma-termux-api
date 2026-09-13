@@ -39,6 +39,18 @@
     <uses-permission android:name="android.permission.DUMP" tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
 
+    <!-- shiroikuma fork (Phase 4): the 保存復元 automation data door runs in a dataSync foreground
+         service; FOREGROUND_SERVICE is required from API 28, the typed one from targetSdk 34. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
+    <!-- shiroikuma fork (Phase 4): without these the automation replies' setPackage() fails silently
+         on Android 11+ — BOTH callers (応用管理 restores, 自由作業盤 runs the 保存復元 batch). -->
+    <queries>
+        <package android:name="shiroikuma.oyokanri" />
+        <package android:name="shiroikuma.jiyusagyoban" />
+    </queries>
+
     <!-- This permission is not used, but a permission is needed on the sharedfiles contentprovider,
          which will always use FLAG_GRANT_READ_URI_PERMISSION. -->
     <permission android:name="${TERMUX_PACKAGE_NAME}.sharedfiles.READ_WRITE" android:protectionLevel="signature" />
@@ -83,6 +95,8 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- shiroikuma fork (Phase 4): static shortcut to the 白い熊 Termux API UI page -->
+            <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
         </activity-alias>
 
         <activity
@@ -212,6 +226,50 @@
 
         <service android:name=".apis.UsbAPI$UsbService"
             android:exported="false" />
+
+
+
+        <!-- ===== shiroikuma fork (Phase 4): the 白い熊 Termux API UI page and the 保存復元 automation
+             contract v2 (sister-app-contract-backup-automation-hand-off.md §1–§4). Additive block;
+             nothing above it is touched. ===== -->
+
+        <!-- The black-yellow UI page: Export / Import, automation rows, Reset. -->
+        <activity
+            android:name=".shiroikuma.ui.ShiroikumaUiActivity"
+            android:exported="true"
+            android:label="@string/shiroikuma_ui_title"
+            android:theme="@style/Theme.Shiroikuma.Ui" />
+
+        <!-- §1: the unauthenticated half of the surface — writes where it is told to, reports what
+             it did. No android:permission by design (the caller cannot hold one). -->
+        <receiver
+            android:name=".shiroikuma.automation.StateExportReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="${applicationId}.action.EXPORT_STATE" />
+                <action android:name="${applicationId}.action.LIST_CATEGORIES" />
+                <action android:name="${applicationId}.action.CANCEL_EXPORT" />
+            </intent-filter>
+        </receiver>
+
+        <!-- §2a: the data door — describe / export / import / cancel for a verified caller. -->
+        <provider
+            android:name=".shiroikuma.automation.AutomationProvider"
+            android:authorities="${applicationId}.automation"
+            android:exported="true"
+            tools:ignore="ExportedContentProvider" />
+
+        <!-- Where a data-door job runs; dataSync (specialUse needs targetSdk 34). -->
+        <service
+            android:name=".shiroikuma.automation.AutomationDataService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <!-- Capability discovery, readable without waking the app (integers — read with getInt). -->
+        <meta-data android:name="shiroikuma.automation.contract" android:value="2" />
+        <meta-data android:name="shiroikuma.automation.format" android:value="1" />
+        <meta-data android:name="shiroikuma.automation.min_format" android:value="1" />
 
     </application>
 

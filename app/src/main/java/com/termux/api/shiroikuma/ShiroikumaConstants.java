@@ -33,6 +33,17 @@ public final class ShiroikumaConstants {
     /** The host app's fork (replaces {@link TermuxConstants#TERMUX_GITHUB_REPO_URL}). */
     public static final String TERMUX_GITHUB_REPO_URL = "https://github.com/ShiroiKuma0/shiroikuma-termux";
 
+    /** Title of the black-yellow customization page (Phase 4) — the house form {@code 白い熊 <App> UI}. */
+    public static final String UI_TITLE = APP_NAME + " UI";
+
+    /**
+     * The English identifier of this app — the repo / APK basename — and therefore the prefix of
+     * every backup it writes: {@code shiroikuma-termux-api_<yyyy-MM-dd_HH-mm-ss>.zip} (family
+     * convention, 白い熊 2026-07-25: no version, no infix, no suffix, so every sister app's
+     * backups sort and read uniformly in one directory).
+     */
+    public static final String EXPORT_SLUG = "shiroikuma-termux-api";
+
     private ShiroikumaConstants() {}
 
     /**
