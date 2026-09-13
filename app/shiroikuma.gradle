@@ -91,7 +91,22 @@ android.defaultConfig.versionCode = forkVersionCode
 // androidx.documentfile is already on the classpath transitively (1.0.0) — declared here so the
 // Export/Import code (SAF tree directory, DocumentFile) does not rest on someone else's dependency.
 // The keep rules cover the custom Preference the page XML instantiates by name.
+// --- our own termux-shared ---------------------------------------------------------------------
+// Upstream's app/build.gradle pulls termux-shared from JitPack (com.termux.termux-app:termux-shared:<sha>),
+// i.e. upstream's names, links and crash-report footer. The fork builds against the termux-shared of
+// ~/git/shiroikuma-termux instead (白い熊 names, our repos), published to mavenLocal as
+// com.termux:termux-shared:$SHIROIKUMA_TERMUX_SHARED_VERSION. The JitPack coordinate is excluded from
+// every configuration so the two never coexist; upstream's dependency line stays untouched.
+configurations.all {
+    exclude group: 'com.termux.termux-app', module: 'termux-shared'
+}
+def forkTermuxSharedVersion = (project.findProperty('SHIROIKUMA_TERMUX_SHARED_VERSION') ?: '').toString().trim()
+if (!forkTermuxSharedVersion) {
+    throw new GradleException('SHIROIKUMA_TERMUX_SHARED_VERSION is missing from gradle.properties')
+}
+
 dependencies {
+    implementation "com.termux:termux-shared:${forkTermuxSharedVersion}"
     implementation 'androidx.documentfile:documentfile:1.0.1'
 }
 android.buildTypes.release.proguardFile(file('shiroikuma-proguard-rules.pro'))

@@ -81,8 +81,10 @@ which is exactly why `BUILD_NUMBER` is **never reset** (see step 5).
    `app/src/main/AndroidManifest.xml`, `app/src/main/res/values/strings.xml` (the `<!ENTITY>`
    block), `app/src/main/res/drawable*/ic_launcher*`, `TermuxAPIConstants.java`, `README.md`, and
    whatever de-branding / UI-page hooks we hold in the activities. A **bump of the `termux-shared`
-   sha** means the next build re-downloads from JitPack (network) and may change shared constants
-   our UI page reads — say so. A move of **`versionCode`** in `app/build.gradle` matters for step 5.
+   sha** in upstream's `app/build.gradle` is informational for us — we build against the fork's own
+   `termux-shared` from mavenLocal (`SHIROIKUMA_TERMUX_SHARED_VERSION`); when upstream's bump
+   signals new shared APIs, re-publish from `~/git/shiroikuma-termux` after its own sync and bump
+   the `-skN` suffix in both repos — say so. A move of **`versionCode`** in `app/build.gradle` matters for step 5.
 
    Also state the stack size (`git rev-list --count master..custom`) and the plan.
 

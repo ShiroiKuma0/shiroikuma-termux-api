@@ -56,10 +56,13 @@ no native code (the JNI libs `termux-shared` drags in are excluded by upstream's
      `keystore.properties` missing (the APK would be unsigned), or the computed `versionCode` not
      exceeding `LAST_BUILT_VERSION_CODE` (raise `BUILD_NUMBER`; never lower it, never reset it).
      It also refuses to overwrite an existing `~/tmp/` file of the same name.
-   - A warm build takes well under a minute. A cold one (fresh checkout, a bumped `termux-shared`
-     sha) downloads Gradle 8.9 and the dependency set from Maven/JitPack — network needed; run it
-     with `run_in_background` if it may exceed the foreground timeout, and poll; never abandon a
-     running build.
+   - **Prerequisite on a fresh machine:** the fork's own `termux-shared` must be in mavenLocal —
+     `cd ~/git/shiroikuma-termux && JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 ANDROID_HOME=/home/shiroikuma/android-sdk ./gradlew publishReleasePublicationToMavenLocal`
+     (version `SHIROIKUMA_TERMUX_SHARED_VERSION` in both repos' `gradle.properties` must match; the
+     resolution failure otherwise reads "Could not find com.termux:termux-shared:…").
+   - A warm build takes well under a minute. A cold one (fresh checkout) downloads Gradle 8.9 and the
+     dependency set from Maven — network needed; run it with `run_in_background` if it may exceed
+     the foreground timeout, and poll; never abandon a running build.
    - **Toolchain check only** (no copy, no bump — never for delivery):
      `./gradlew :app:assembleRelease`. Verify a signed APK with
      `apksigner verify --print-certs <apk> | grep SHA-256` → must be

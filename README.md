@@ -94,10 +94,9 @@ the bridge that lets scripts in Termux reach the Android APIs — the camera, th
 notifications, sensors, telephony, TTS and the rest — and this fork changes nothing about how those
 calls are made. The code remains under the [GPL-3.0](http://www.gnu.org/licenses/gpl-3.0.en.html).
 
-One known remainder: the “Where To Report An Issue” footer of a plugin crash report still names
-upstream's Termux / Termux:API issue trackers — it is built inside the JitPack `termux-shared`
-library from upstream's constants, and goes away once the dependency points at the fork's own
-`termux-shared`.
+The app builds against the fork's own `termux-shared` library (published to mavenLocal by
+[shiroikuma-termux](https://github.com/ShiroiKuma0/shiroikuma-termux)), so even the “Where To Report
+An Issue” footer of a plugin crash report names this fork, not upstream.
 
 ## Building
 

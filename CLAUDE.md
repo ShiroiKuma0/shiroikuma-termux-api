@@ -160,8 +160,14 @@ Upstream's own release artefacts are **debug** builds signed with the tracked
   `gradle.properties`, upstream's). Gradle wrapper 8.9, AGP 8.7.3. No NDK.
 - Gradle needs `local.properties` with `sdk.dir=/home/shiroikuma/android-sdk` (gitignored); a
   background shell does not inherit `ANDROID_HOME`, hence the explicit export above.
-- The one external dependency, `com.termux.termux-app:termux-shared:<sha>`, comes from **JitPack**
-  — the first build (and every bump of that sha) needs network.
+- The one external dependency is **our own `termux-shared`**: `com.termux:termux-shared:<SHIROIKUMA_TERMUX_SHARED_VERSION>`
+  (`gradle.properties`, e.g. `0.118.0-sk1`) from **`mavenLocal()`**, published by the sister repo:
+  `cd ~/git/shiroikuma-termux && JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 ANDROID_HOME=/home/shiroikuma/android-sdk ./gradlew publishReleasePublicationToMavenLocal`
+  (also publishes `terminal-view` and `terminal-emulator`, which its POM needs). Upstream's JitPack
+  coordinate `com.termux.termux-app:termux-shared:<sha>` stays in `app/build.gradle` untouched but is
+  **excluded** in `app/shiroikuma.gradle`, so the fork builds against 白い熊's constants (names, links,
+  the crash-report footer). A fresh machine must run that publish once before `buildFork`; keep the
+  version in the two `gradle.properties` in step and bump the `-skN` suffix when `termux-shared` changes.
 
 ## Architecture (upstream Termux:API)
 
@@ -176,7 +182,7 @@ One Gradle module, `:app`, package `com.termux.api`.
 | Our UI page, Export / Import engine, automation contract | `shiroikuma/ui/`, `shiroikuma/backup/`, `shiroikuma/automation/` + the `shiroikuma_*` resources |
 | Constants (app name, GitHub links) | ours: `shiroikuma/ShiroikumaConstants.java` + the `<!ENTITY>` block in `res/values/strings.xml`; upstream's `TermuxAPIConstants.java` (receiver name, share authority) and the library's `TermuxConstants` (log tag, paths) |
 | Manifest: `sharedUserId`, the placeholders, every permission the APIs need | `app/src/main/AndroidManifest.xml` |
-| Shared Termux library (constants, prefs, logger) | `com.termux.termux-app:termux-shared` (JitPack) |
+| Shared Termux library (constants, prefs, logger) | `com.termux:termux-shared:<SHIROIKUMA_TERMUX_SHARED_VERSION>` from `mavenLocal()` — the fork's own, published by `~/git/shiroikuma-termux` (upstream's JitPack coordinate excluded in `app/shiroikuma.gradle`) |
 | Our build layer | `app/shiroikuma.gradle`, `gradle.properties` (`BUILD_NUMBER`, `LAST_BUILT_VERSION_CODE`) |
 
 ## Hard rules
@@ -211,11 +217,10 @@ One Gradle module, `:app`, package `com.termux.api`.
   Anything new is a string to route through the entities / `ShiroikumaConstants`. Wider check:
   `grep -rn '"[^"]*Termux[^"]*"' app/src/main/java` must hit only internal names (`LOG_TAG`s,
   `TermuxFingerprintAPIKey`, `TermuxAudioRecording_`, ResultReturner's exception texts).
-  Known remainder that this repo cannot fix: the "Where To Report An Issue" section appended to
-  plugin error reports by `TermuxPluginUtils.sendPluginCommandErrorNotification()` lists upstream's
-  `Termux` / `Termux:API` issue trackers — it is built inside the JitPack `termux-shared` library
-  from its own `TermuxConstants`; it goes away only by pointing the dependency at a `termux-shared`
-  published from `ShiroiKuma0/shiroikuma-termux` (whose Phase 3 rewrites those constants).
+  The "Where To Report An Issue" section appended to plugin error reports by
+  `TermuxPluginUtils.sendPluginCommandErrorNotification()` comes from the library's `TermuxConstants`
+  — since build `+004` that library is our own `termux-shared` (mavenLocal), so it names the
+  ShiroiKuma0 forks; if it ever says `termux/termux-api` again, the JitPack artifact crept back in.
 - Do not edit upstream's Java or resources for anything our own layer (`app/shiroikuma.gradle`, the
   `shiroikuma/` package, `shiroikuma_*` resources) can carry — the smaller the diff against
   `master`, the cleaner every rebase.
