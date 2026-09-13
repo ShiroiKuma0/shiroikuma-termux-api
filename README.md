@@ -1,21 +1,135 @@
+<div align="center">
+
+<img src="design/shiroikuma-termux-api-icon.svg" width="120" alt="白い熊 Termux API icon" />
+
 # 白い熊 Termux API
 
-白い熊's fork of [Termux:API](https://github.com/termux/termux-api), the Termux plugin app that
-exposes Android APIs (camera, clipboard, notifications, sensors, SMS, TTS, …) to the `termux-api`
-command-line package.
+**The Termux plugin that hands Android to the shell — camera, clipboard, notifications, sensors, SMS, TTS and more — the way 白い熊 runs it.**
 
-- **App id `com.termux.api` — unchanged.** The `termux-api` CLI hardcodes it, so the fork installs
-  **over** the stock Termux:API (same id, same shared UID `com.termux`, higher versionCode). It is
-  signed with the one key of the whole 白い熊 Termux family
-  ([白い熊 Termux](https://github.com/ShiroiKuma0/shiroikuma-termux) and its plugins), which is what
-  the shared UID requires.
-- **What changes:** the label (**白い熊 Termux API**), the black-yellow icon, the links the app
-  shows (this fork and the 白い熊 Termux fork instead of upstream's repos), the release signing key,
-  and — in a coming version — a 白い熊 Termux API settings page. Everything else is upstream,
-  rebased onto every upstream `master` commit; the version pins that commit
-  (`0.53.0+<base date>.<HH-MM>.g<sha8>+<build>`).
-- **Builds:** [Releases](https://github.com/ShiroiKuma0/shiroikuma-termux-api/releases) ·
-  [Issues](https://github.com/ShiroiKuma0/shiroikuma-termux-api/issues).
+A fork of [Termux:API](https://github.com/termux/termux-api) with **major additions**: the **白い熊 Termux API UI** page, Export / Import of the app's settings, the sister-app backup-automation contract (so 保存復元 backs it up headlessly), the black/yellow traced icon and the 白い熊 name everywhere, and a reproducible signed release build.
+
+Installs **over** the stock Termux:API (app id `com.termux.api` kept, so the `termux-api` CLI package and the rest of the Termux package ecosystem keep working); the whole family — 白い熊 Termux, Termux API, Termux X11, Termux GUI and 白い熊 GNU Emacs — shares Android UID `com.termux` and is signed with one key, so every member must come from these forks.
+
+**📥 Latest release: [`0.53.0+2026-09-06.10-33.g44dff893+003`](https://github.com/ShiroiKuma0/shiroikuma-termux-api/releases/latest)** — [all releases & APK downloads »](https://github.com/ShiroiKuma0/shiroikuma-termux-api/releases)
+
+</div>
+
+---
+
+## 🐻 The 白い熊 Termux API UI page
+
+Stock Termux:API has a settings screen with one real option. This fork adds a page of its own in
+the house black/yellow look — **白い熊 Termux API UI** — reachable three ways: **long-press the
+settings icon** in the app's toolbar, the **「白い熊 UI」 shortcut** on the launcher icon, or the
+**first row of the Settings screen**. Section headings with the text-wide yellow underline, rows at
+the 72 dp indent, pill buttons, bordered dialogs — the same page every 白い熊 app carries, so you
+never have to learn a second layout.
+
+---
+
+## 📦 Export / Import — the app's settings as one ZIP
+
+Pick an export directory once (any folder, through the system picker), then **Export** writes
+`shiroikuma-termux-api_<yyyy-MM-dd_HH-mm-ss>.zip` there — the app's preferences, type-tagged, in one
+archive that reads and sorts uniformly beside every sister app's backups. **Import** restores just
+the categories the archive holds and offers to restart the app on the spot. The page shows the
+directory (red until set) and the **last export** with its time and size, so you can see at a
+glance whether a backup exists.
+
+---
+
+## 🤖 Backup automation for 保存復元
+
+The app speaks the family's **backup-automation contract v2**: a broadcast door
+(`com.termux.api.action.EXPORT_STATE` / `LIST_CATEGORIES` / `CANCEL_EXPORT`) that writes the same
+ZIP headlessly, and a content-provider data door (`com.termux.api.automation`, with `describe` /
+`export` / `import` / `cancel`) that streams the backup into a file descriptor the caller opens —
+so 白い熊 応用管理 can back the app up and restore it onto a clean phone, and 白い熊 自由作業盤 can run
+the 保存復元 batch across the whole family in one go. Callers are verified by package name, UID and
+pinned signing certificate; an optional authorization token can be switched on; progress broadcasts
+with a heartbeat keep the batch informed; and the whole thing can be closed off with one switch.
+
+---
+
+## 🎨 The traced icon and the name
+
+The launcher icon is the family's **black/yellow traced line art** — the `>_` prompt inside the
+disc, yellow `#FFFF00` on black — generated from one geometry model
+(`tools/icon/emit_launcher.py`, SVG master under `design/`). The app is **白い熊 Termux API** in the
+toolbar, the notifications, the toasts and the launcher; its links point at this fork and at
+[白い熊 Termux](https://github.com/ShiroiKuma0/shiroikuma-termux); the donate row is gone.
+
+---
+
+## 🔑 One family, one key
+
+The app id **stays `com.termux.api`** — the `termux-api` CLI binary in the Termux prefix hardcodes
+`com.termux.api/.TermuxApiReceiver` and the `com.termux.api://listen` socket, so this build
+**upgrades stock Termux:API in place** (same id, same shared UID `com.termux`, higher versionCode).
+It is signed with the one key of the whole 白い熊 `com.termux` family, which is what a shared UID
+demands: install the sister forks from their own release pages, never a mix of stock and fork.
+
+The version pins the upstream commit each release is built on:
+`<upstream version>+<upstream base date>.<HH-MM>.g<sha8>+<NNN>` — the fork tracks upstream's
+`master` tip, not its rare release tags, and `versionCode` is upstream's code × 10000 + the build
+counter, so a rebase is never a downgrade.
+
+---
+
+## 👪 Family
+
+- [shiroikuma-termux](https://github.com/ShiroiKuma0/shiroikuma-termux) — 白い熊 Termux, the terminal itself (Termux:Boot, Widget, Float and Styling absorbed).
+- [shiroikuma-termux-api](https://github.com/ShiroiKuma0/shiroikuma-termux-api) — this repo.
+- [shiroikuma-termux-x11](https://github.com/ShiroiKuma0/shiroikuma-termux-x11) — 白い熊 Termux X11.
+- [shiroikuma-termux-gui](https://github.com/ShiroiKuma0/shiroikuma-termux-gui) — 白い熊 Termux GUI.
+- [shiroikuma-emacs](https://github.com/ShiroiKuma0/shiroikuma-emacs) — 白い熊 GNU Emacs (`shiroikuma.emacs`, installs side-by-side with stock `org.gnu.emacs`).
+
+---
+
+## Built on Termux:API
+
+A fork of [Termux:API](https://github.com/termux/termux-api) (app id `com.termux.api` kept, so it
+installs over the official build and the `termux-api` package keeps addressing it). Termux:API is
+the bridge that lets scripts in Termux reach the Android APIs — the camera, the clipboard,
+notifications, sensors, telephony, TTS and the rest — and this fork changes nothing about how those
+calls are made. The code remains under the [GPL-3.0](http://www.gnu.org/licenses/gpl-3.0.en.html).
+
+One known remainder: the “Where To Report An Issue” footer of a plugin crash report still names
+upstream's Termux / Termux:API issue trackers — it is built inside the JitPack `termux-shared`
+library from upstream's constants, and goes away once the dependency points at the fork's own
+`termux-shared`.
+
+## Building
+
+```bash
+git clone https://github.com/ShiroiKuma0/shiroikuma-termux-api.git
+cd shiroikuma-termux-api            # branch `custom` — the fork; `master` mirrors upstream
+
+# Release signing: `keystore.properties` at the repo root (gitignored) — copy
+# keystore.properties_sample and fill in the family keystore. Without it buildFork refuses to run
+# (the APK would come out unsigned), and a build signed with any other key cannot install into
+# the com.termux shared UID (INSTALL_FAILED_SHARED_USER_INCOMPATIBLE).
+cp keystore.properties_sample keystore.properties && $EDITOR keystore.properties
+
+# JDK 21 and the Android SDK (compileSdk 35); no NDK — the app has no native code.
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+export ANDROID_HOME="$HOME/android-sdk"
+
+# The fork build: signed release APK → ~/tmp/shiroikuma-termux-api_<versionName>_universal.apk,
+# then BUILD_NUMBER in gradle.properties is bumped for the next build.
+./gradlew buildFork --console=plain < /dev/null
+
+# Toolchain check only (no copy, no bump):
+./gradlew :app:assembleRelease --console=plain < /dev/null
+# → app/build/outputs/apk/release/termux-api-app_v<versionName>+release.apk
+```
+
+`./gradlew -q versionName` prints the exact versionName the next build will carry. Verify a
+build with `apksigner verify --print-certs <apk>` (family certificate SHA-256
+`50b47e8f09b8781fccc998df3fc5c02de0dd9670a3d37e6cacba9f4e76319604`) and
+`aapt dump badging <apk> | head -1` (package, versionCode, versionName).
+
+---
 
 Upstream's README follows unchanged.
 
