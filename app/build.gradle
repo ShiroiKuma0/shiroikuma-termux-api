@@ -95,3 +95,7 @@ static def validateVersionName(String versionName) {
     if (!java.util.regex.Pattern.matches("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?\$", versionName))
         throw new GradleException("The versionName '" + versionName + "' is not a valid version as per semantic version '2.0.0' spec in the format 'major.minor.patch(-prerelease)(+buildmetadata)'. https://semver.org/spec/v2.0.0.html.")
 }
+
+// shiroikuma-termux-api fork: version pin, release signing and buildFork live in shiroikuma.gradle.
+// Applied LAST so upstream's validateVersionName() above has already accepted its own literal.
+apply from: 'shiroikuma.gradle'
