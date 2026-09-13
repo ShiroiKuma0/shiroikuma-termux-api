@@ -22,6 +22,7 @@ import androidx.core.util.Pair;
 import com.termux.api.R;
 import com.termux.api.TermuxAPIConstants;
 import com.termux.api.TermuxApiReceiver;
+import com.termux.api.shiroikuma.ShiroikumaConstants;
 import com.termux.api.util.PendingIntentUtils;
 import com.termux.api.util.PluginUtils;
 import com.termux.api.util.ResultReturner;
@@ -42,7 +43,7 @@ public class NotificationAPI {
 
     public static final String BIN_SH = TermuxConstants.TERMUX_PREFIX_DIR_PATH + "/bin/sh";
     private static final String CHANNEL_ID = "termux-notification";
-    private static final String CHANNEL_TITLE = "Termux API notification channel";
+    private static final String CHANNEL_TITLE = ShiroikumaConstants.APP_NAME + " notification channel";
     private static final String KEY_TEXT_REPLY = "TERMUX_TEXT_REPLY";
 
     /**

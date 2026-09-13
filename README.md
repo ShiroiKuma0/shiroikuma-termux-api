@@ -1,3 +1,26 @@
+# 白い熊 Termux API
+
+白い熊's fork of [Termux:API](https://github.com/termux/termux-api), the Termux plugin app that
+exposes Android APIs (camera, clipboard, notifications, sensors, SMS, TTS, …) to the `termux-api`
+command-line package.
+
+- **App id `com.termux.api` — unchanged.** The `termux-api` CLI hardcodes it, so the fork installs
+  **over** the stock Termux:API (same id, same shared UID `com.termux`, higher versionCode). It is
+  signed with the one key of the whole 白い熊 Termux family
+  ([白い熊 Termux](https://github.com/ShiroiKuma0/shiroikuma-termux) and its plugins), which is what
+  the shared UID requires.
+- **What changes:** the label (**白い熊 Termux API**), the black-yellow icon, the links the app
+  shows (this fork and the 白い熊 Termux fork instead of upstream's repos), the release signing key,
+  and — in a coming version — a 白い熊 Termux API settings page. Everything else is upstream,
+  rebased onto every upstream `master` commit; the version pins that commit
+  (`0.53.0+<base date>.<HH-MM>.g<sha8>+<build>`).
+- **Builds:** [Releases](https://github.com/ShiroiKuma0/shiroikuma-termux-api/releases) ·
+  [Issues](https://github.com/ShiroiKuma0/shiroikuma-termux-api/issues).
+
+Upstream's README follows unchanged.
+
+---
+
 # Termux API
 
 [![Build status](https://github.com/termux/termux-api/workflows/Build/badge.svg)](https://github.com/termux/termux-api/actions)

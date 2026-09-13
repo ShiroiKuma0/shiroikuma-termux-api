@@ -43,13 +43,13 @@ case analysis.
 | applicationId | `com.termux.api` (**unchanged** — the CLI hardcodes it) | `app/build.gradle` → `defaultConfig` (upstream's line, untouched) |
 | namespace (R/BuildConfig pkg) | `com.termux.api` (**never rename**) | `app/build.gradle` |
 | sharedUserId | `com.termux` via the `${TERMUX_PACKAGE_NAME}` placeholder (**unchanged**) | `app/src/main/AndroidManifest.xml`, `manifestPlaceholders` in `app/build.gradle` |
-| App label | `白い熊 Termux API` — **pending (Phase 3)**; today upstream's `Termux:API` | the `TERMUX_API_APP_NAME` `<!ENTITY>` in `app/src/main/res/values/strings.xml` **and** `manifestPlaceholders.TERMUX_API_APP_NAME` in `app/build.gradle` (both feed user-visible text) |
-| App icon | black-yellow traced (yellow `#FFFF00` line-art on black) — **pending (Phase 2)** | `app/src/main/res/drawable/ic_launcher.xml`, `drawable-anydpi-v26/ic_launcher.xml`, cut by `tools/icon/emit_launcher.py` |
+| App label | `白い熊 Termux API` (host app: `白い熊 Termux`) — **done (Phase 3)** | the `TERMUX_API_APP_NAME` / `TERMUX_APP_NAME` `<!ENTITY>` pair in `app/src/main/res/values/strings.xml` (every resource string, incl. `app_name` → launcher `android:label`) **and** `manifestPlaceholders.TERMUX_API_APP_NAME` / `TERMUX_APP_NAME` in `app/build.gradle` (kept in step; the manifest itself only uses `${TERMUX_PACKAGE_NAME}`). Java-side twin: `ShiroikumaConstants.APP_NAME` / `TERMUX_APP_NAME` in `app/src/main/java/com/termux/api/shiroikuma/ShiroikumaConstants.java`, read by `TermuxAPIMainActivity` (toolbar title, launcher-icon toasts), `TermuxApiReceiver` (error-notification title, two permission toasts), `ResultReturner` (error-notification title), `NotificationAPI` (`CHANNEL_TITLE`) — the JitPack `termux-shared` `TermuxConstants.TERMUX_API_APP_NAME` still says `Termux:API` and is left for the log tag (`TermuxAPIApplication`) and the About-report file name (`TermuxAPISettingsActivity`) |
+| App icon | black-yellow traced (yellow `#FFFF00` line-art on black) — **done (Phase 2, approved 2026-09-13)** | `app/src/main/res/drawable/ic_foreground.xml` (the traced vector) + `drawable/ic_launcher.xml` (legacy, pre-26), both emitted by `tools/icon/emit_launcher.py` from the geometry model, SVG master `design/shiroikuma-termux-api-icon.svg`; `drawable-anydpi-v26/ic_launcher.xml` is upstream's adaptive wrapper, untouched (black background + `@drawable/ic_foreground`) |
 | Version tail | `versionName = "<upstream>+<base date>.<HH-MM>.g<sha8>+NNN"`, `versionCode = <upstream code>*10000+N` | `app/shiroikuma.gradle` (reads upstream's literals) |
 | Signing | gitignored `keystore.properties` → `~/.android-keystores/shiroikuma-emacs-termux.jks` (alias `Emacs keystore`) — **the one key of the whole `com.termux` shared-UID family** | `app/shiroikuma.gradle` `signingConfigs.release` |
 | Build task | `buildFork` (assembleRelease → copy to `~/tmp/` → bump `BUILD_NUMBER`) | `app/shiroikuma.gradle`, applied by the last line of `app/build.gradle` |
-| Fork links | `https://github.com/ShiroiKuma0/shiroikuma-termux-api` everywhere the app links out — **pending (Phase 3)** | `plugin_info` in `strings.xml`, `TermuxAPIConstants.java`, `README.md`, fastlane |
-| De-branding | our name + our GitHub links everywhere user-visible — **pending (Phase 3)** | `strings.xml` entities, main activity, README |
+| Fork links | `https://github.com/ShiroiKuma0/shiroikuma-termux-api` (+ `/issues`, `/releases`) and `https://github.com/ShiroiKuma0/shiroikuma-termux` everywhere the app links out — **done (Phase 3)** | `ShiroikumaConstants.GITHUB_REPO_URL` / `TERMUX_GITHUB_REPO_URL` fed into `plugin_info` by `TermuxAPIMainActivity` (the `termux-api-package` docs link stays upstream's), `ShiroikumaConstants.getImportantLinksMarkdownString()` replaces `TermuxUtils.getImportantLinksMarkdownString()` on the About page (`TermuxAPISettingsActivity`; Termux + Termux:API rows → the forks, other plugins / packages / email / reddit / wiki as upstream), `README.md` fork header. `TermuxAPIConstants.java` holds no links (only the receiver name and the file-share authority) — untouched. No fastlane in this repo |
+| De-branding | our name + our GitHub links everywhere user-visible; donate row removed — **done (Phase 3)** | the rows above, plus `keep_alive_service` in `strings.xml` now uses the entity, the `link__termux_donate` `<Preference>` is dropped from `res/xml/sets__termux.xml` and its `link__donate___val__title` string from `strings.xml` (`configureDonatePreference()` in `TermuxAPISettingsActivity` stays as dead code — `findPreference` returns null — to keep the upstream diff small). Deliberately left: `LOG_TAG`s, `CHANNEL_ID`, `TermuxAudioRecording_` / `TermuxFingerprintAPIKey` internal names, ResultReturner's "Termux app" exception texts (developer-facing), upstream's README body and `SECURITY.md` |
 | 白い熊 Termux API UI | the black-yellow page: Export/Import (settings only) + automation rows + Reset — **pending (Phase 4)** | `app/src/main/java/com/termux/api/shiroikuma/` |
 
 ### CHANGELOG.md is unified — our sections on top
@@ -128,7 +128,7 @@ One Gradle module, `:app`, package `com.termux.api`.
 | Socket listener (`com.termux.api://listen`) + keep-alive service | `SocketListener.java`, `KeepAliveService.java` |
 | The 37 API implementations (`termux-camera-photo`, `termux-notification`, …) | `app/src/main/java/com/termux/api/apis/*API.java` |
 | Main / settings activities (the settings page is where our UI page will hang) | `activities/`, `settings/`, `res/xml/prefs__*.xml` |
-| Constants (app name, GitHub links — Phase 3 de-branding targets) | `TermuxAPIConstants.java`, `res/values/strings.xml` (the `<!ENTITY>` block) |
+| Constants (app name, GitHub links) | ours: `shiroikuma/ShiroikumaConstants.java` + the `<!ENTITY>` block in `res/values/strings.xml`; upstream's `TermuxAPIConstants.java` (receiver name, share authority) and the library's `TermuxConstants` (log tag, paths) |
 | Manifest: `sharedUserId`, the placeholders, every permission the APIs need | `app/src/main/AndroidManifest.xml` |
 | Shared Termux library (constants, prefs, logger) | `com.termux.termux-app:termux-shared` (JitPack) |
 | Our build layer | `app/shiroikuma.gradle`, `gradle.properties` (`BUILD_NUMBER`, `LAST_BUILT_VERSION_CODE`) |
@@ -160,7 +160,16 @@ One Gradle module, `:app`, package `com.termux.api`.
   rebases `custom`, keeps `BUILD_NUMBER` counting, and builds the next `+NNN`.
 - **Brand grep guard after every rebase** — upstream keeps adding user-visible strings:
   `grep -rn 'Termux:API\|termux/termux-api' app/src/main/res app/src/main/java README.md | grep -v 'com.termux.api'`
-  must show only what Phase 3 deliberately left (package-repo links, upstream attribution).
+  must show only what Phase 3 deliberately left: two `<!-- Termux:API … -->` comments in
+  `strings.xml` (lines 72/75) and `README.md` (our header's attribution link + upstream's body).
+  Anything new is a string to route through the entities / `ShiroikumaConstants`. Wider check:
+  `grep -rn '"[^"]*Termux[^"]*"' app/src/main/java` must hit only internal names (`LOG_TAG`s,
+  `TermuxFingerprintAPIKey`, `TermuxAudioRecording_`, ResultReturner's exception texts).
+  Known remainder that this repo cannot fix: the "Where To Report An Issue" section appended to
+  plugin error reports by `TermuxPluginUtils.sendPluginCommandErrorNotification()` lists upstream's
+  `Termux` / `Termux:API` issue trackers — it is built inside the JitPack `termux-shared` library
+  from its own `TermuxConstants`; it goes away only by pointing the dependency at a `termux-shared`
+  published from `ShiroiKuma0/shiroikuma-termux` (whose Phase 3 rewrites those constants).
 - Do not edit upstream's Java or resources for anything our own layer (`app/shiroikuma.gradle`, the
   `shiroikuma/` package, `shiroikuma_*` resources) can carry — the smaller the diff against
   `master`, the cleaner every rebase.

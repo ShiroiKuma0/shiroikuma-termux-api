@@ -18,8 +18,8 @@ android {
         validateVersionName(versionName)
 
         manifestPlaceholders.TERMUX_PACKAGE_NAME = "com.termux"
-        manifestPlaceholders.TERMUX_APP_NAME = "Termux"
-        manifestPlaceholders.TERMUX_API_APP_NAME = "Termux:API"
+        manifestPlaceholders.TERMUX_APP_NAME = "白い熊 Termux"
+        manifestPlaceholders.TERMUX_API_APP_NAME = "白い熊 Termux API"
     }
 
     signingConfigs {

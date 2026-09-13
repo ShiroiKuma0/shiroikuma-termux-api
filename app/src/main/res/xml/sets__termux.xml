@@ -12,10 +12,4 @@
         app:title="@string/link__about___val__title"
         app:persistent="false"/>
 
-    <Preference
-        app:key="link__termux_donate"
-        app:title="@string/link__donate___val__title"
-        app:persistent="false"
-        app:isPreferenceVisible="false"/>
-
 </PreferenceScreen>

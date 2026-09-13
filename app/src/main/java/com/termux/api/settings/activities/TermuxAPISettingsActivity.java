@@ -10,6 +10,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.termux.api.R;
+import com.termux.api.shiroikuma.ShiroikumaConstants;
 import com.termux.shared.activities.ReportActivity;
 import com.termux.shared.file.FileUtils;
 import com.termux.shared.models.ReportInfo;
@@ -87,7 +88,7 @@ public class TermuxAPISettingsActivity extends AppCompatActivity {
                             StringBuilder aboutString = new StringBuilder();
                             aboutString.append(TermuxUtils.getAppInfoMarkdownString(context, TermuxUtils.AppInfoMode.TERMUX_AND_PLUGIN_PACKAGE));
                             aboutString.append("\n\n").append(AndroidUtils.getDeviceInfoMarkdownString(context, true));
-                            aboutString.append("\n\n").append(TermuxUtils.getImportantLinksMarkdownString(context));
+                            aboutString.append("\n\n").append(ShiroikumaConstants.getImportantLinksMarkdownString());
 
                             ReportInfo reportInfo = new ReportInfo(title,
                                     TermuxConstants.TERMUX_API_APP.TERMUX_API_MAIN_ACTIVITY_NAME, title);

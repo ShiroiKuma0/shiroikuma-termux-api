@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.termux.api.TermuxAPIApplication;
+import com.termux.api.shiroikuma.ShiroikumaConstants;
 import com.termux.api.settings.activities.TermuxAPISettingsActivity;
 import com.termux.api.util.ViewUtils;
 import com.termux.shared.activity.ActivityUtils;
@@ -46,11 +47,11 @@ public class TermuxAPIMainActivity extends AppCompatActivity {
         AppCompatActivityUtils.setNightMode(this, NightMode.getAppNightMode().getName(), true);
 
         AppCompatActivityUtils.setToolbar(this, com.termux.shared.R.id.toolbar);
-        AppCompatActivityUtils.setToolbarTitle(this, com.termux.shared.R.id.toolbar, TermuxConstants.TERMUX_API_APP_NAME, 0);
+        AppCompatActivityUtils.setToolbarTitle(this, com.termux.shared.R.id.toolbar, ShiroikumaConstants.APP_NAME, 0);
 
         TextView pluginInfo = findViewById(R.id.textview_plugin_info);
-        pluginInfo.setText(getString(R.string.plugin_info, TermuxConstants.TERMUX_GITHUB_REPO_URL,
-                TermuxConstants.TERMUX_API_GITHUB_REPO_URL, TermuxConstants.TERMUX_API_APT_PACKAGE_NAME,
+        pluginInfo.setText(getString(R.string.plugin_info, ShiroikumaConstants.TERMUX_GITHUB_REPO_URL,
+                ShiroikumaConstants.GITHUB_REPO_URL, TermuxConstants.TERMUX_API_APT_PACKAGE_NAME,
                 TermuxConstants.TERMUX_API_APT_GITHUB_REPO_URL));
 
         mBatteryOptimizationNotDisabledWarning = findViewById(R.id.textview_battery_optimization_not_disabled_warning);
@@ -164,11 +165,11 @@ public class TermuxAPIMainActivity extends AppCompatActivity {
         changeLauncherActivityStateButton.setAlpha(1f);
         if (currentlyDisabled) {
             changeLauncherActivityStateButton.setText(com.termux.shared.R.string.action_enable_launcher_icon);
-            stateChangeMessage = getString(com.termux.shared.R.string.msg_enabling_launcher_icon, TermuxConstants.TERMUX_API_APP_NAME);
+            stateChangeMessage = getString(com.termux.shared.R.string.msg_enabling_launcher_icon, ShiroikumaConstants.APP_NAME);
             newState = true;
         } else {
             changeLauncherActivityStateButton.setText(com.termux.shared.R.string.action_disable_launcher_icon);
-            stateChangeMessage = getString(com.termux.shared.R.string.msg_disabling_launcher_icon, TermuxConstants.TERMUX_API_APP_NAME);
+            stateChangeMessage = getString(com.termux.shared.R.string.msg_disabling_launcher_icon, ShiroikumaConstants.APP_NAME);
             newState = false;
         }
 

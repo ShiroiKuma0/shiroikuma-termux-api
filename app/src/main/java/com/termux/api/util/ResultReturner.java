@@ -16,6 +16,7 @@ import android.util.JsonWriter;
 
 import androidx.annotation.NonNull;
 
+import com.termux.api.shiroikuma.ShiroikumaConstants;
 import com.termux.shared.android.PackageUtils;
 import com.termux.shared.file.FileUtils;
 import com.termux.shared.logger.Logger;
@@ -288,7 +289,7 @@ public abstract class ResultReturner {
                 Logger.logStackTraceWithMessage(LOG_TAG, message, t);
 
                 TermuxPluginUtils.sendPluginCommandErrorNotification(ResultReturner.context, LOG_TAG,
-                        TermuxConstants.TERMUX_API_APP_NAME + " Error", message, t);
+                        ShiroikumaConstants.APP_NAME + " Error", message, t);
 
                 if (asyncResult != null && receiver != null && receiver.isOrderedBroadcast()) {
                     asyncResult.setResultCode(1);
